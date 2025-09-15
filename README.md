@@ -1,6 +1,8 @@
-# hamid-vai-python-study
+# Python fundamentals and apply them to text and biological sequence analysis
 
 how to access in colab
-Replace github.com with
+Replace `github.com` with
 
-https://colab.research.google.com/github/
+`https://colab.research.google.com/github/`
+
+## roadmap
