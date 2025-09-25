@@ -1,4 +1,4 @@
-# 📅 Day 1: Introduction & Setup
+# Day 1: Introduction & Setup
 
 ### 🐍 What is Python? Why use it?
 
