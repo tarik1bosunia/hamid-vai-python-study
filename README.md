@@ -5,4 +5,4 @@ Replace `github.com` with
 
 `https://colab.research.google.com/github/`
 
-## roadmap
+## [learning roadmap](./notes/)
