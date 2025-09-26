@@ -5,4 +5,4 @@ Replace `github.com` with
 
 `https://colab.research.google.com/github/`
 
-## [learning roadmap](./notes/)
+## [learning roadmap](./notes/python_learning_roadmap.md)
