@@ -148,3 +148,97 @@ finally:
 6. Save a file into Google Drive from Colab and read it back.
 7. Upload a text file from your computer into Colab and print its contents.
 8. Download a generated file from Colab to your computer.
+
+---
+
+### 🚀 Google Colab + Drive: Step‑by‑step Guide (Day 9 Appendix)
+
+**Goal:** Save and read a file *permanently* in Google Drive from Colab.
+
+#### 1) Mount Google Drive
+
+```python
+from google.colab import drive
+drive.mount('/content/drive')
+```
+
+* Run this cell → click the URL → choose your Google account → copy the auth code back to Colab.
+* After success, your Drive is available under `/content/drive/`.
+
+#### 2) Verify the mount & find the correct path
+
+> Newer Colab uses `MyDrive` (no space). Some older setups show `My Drive` (with space).
+
+```python
+import os
+print(os.listdir('/content/drive'))  # expect: ['MyDrive', 'Shareddrives'] or ['My Drive']
+```
+
+Pick the correct base path:
+
+```python
+from pathlib import Path
+base = Path('/content/drive/MyDrive')
+if not base.exists():
+    base = Path('/content/drive/My Drive')
+print('Using base path:', base)
+```
+
+#### 3) Create a folder for your files (optional)
+
+```python
+workdir = base / 'colab_demo'
+workdir.mkdir(parents=True, exist_ok=True)
+workdir
+```
+
+#### 4) Save (write) a file into Drive
+
+```python
+p = workdir / 'example.txt'
+with p.open('w', encoding='utf-8') as f:
+    f.write('This file is saved permanently in Google Drive!
+')
+    f.write('Made from Google Colab.
+')
+print('Wrote:', p)
+```
+
+#### 5) Read the file back from Drive
+
+```python
+with p.open('r', encoding='utf-8') as f:
+    print(f.read())
+```
+
+#### 6) List files in the folder (confirm it’s there)
+
+```python
+for item in workdir.iterdir():
+    print('•', item.name)
+```
+
+#### 7) (Optional) Download the file to your computer
+
+```python
+from google.colab import files
+files.download(str(p))
+```
+
+#### 8) (Optional) Unmount Drive when finished
+
+```python
+drive.flush_and_unmount()
+```
+
+---
+
+### 🧰 Common Errors & Fixes
+
+* **`FileNotFoundError`** → Path typo or wrong base. Use the *path check* in Step 2 and ensure the folder exists (Step 3).
+* **`No such file or directory: '/content/drive/My Drive/...'`** → Your environment likely uses `/content/drive/MyDrive`. Pick it dynamically as shown.
+* **Nothing persists after session** → You saved to Colab local (`/content/...`) not Drive. Ensure paths start with `/content/drive/...`.
+* **Encoding issues** with non‑English text → pass `encoding='utf-8'` when reading/writing.
+* **Shared drive file** → Use `/content/drive/Shareddrives/<Your Shared Drive Name>/...`.
+
+> ✅ After Step 4–6, open Google Drive in your browser and navigate to **MyDrive → colab_demo → example.txt** to see the file created from Colab.
