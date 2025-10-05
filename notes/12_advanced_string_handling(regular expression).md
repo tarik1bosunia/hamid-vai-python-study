@@ -1,4 +1,4 @@
-# Day 12: Advanced String Handling (Regular Expressions)
+# 📅 Day 12: Advanced String Handling (Regular Expressions)
 
 Regular expressions (**regex**) allow powerful searching, matching, and manipulation of text patterns in Python. The built-in `re` module provides all regex functionalities.
 
@@ -9,6 +9,18 @@ Regular expressions (**regex**) allow powerful searching, matching, and manipula
 ```python
 import re
 ```
+
+---
+
+## 🔹 Common Functions
+
+| Function       | Description                                                |
+| -------------- | ---------------------------------------------------------- |
+| `re.match()`   | Checks for a match only at the **beginning** of the string |
+| `re.search()`  | Searches the **entire** string for a match                 |
+| `re.findall()` | Returns all **non-overlapping matches** as a list          |
+| `re.sub()`     | **Replaces** matches with a new string                     |
+| `re.split()`   | **Splits** a string by occurrences of a pattern            |
 
 ---
 
