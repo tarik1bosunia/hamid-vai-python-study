@@ -87,7 +87,7 @@ print(match.group(1))  # alice
 print(match.group(2))  # 21
 ```
 
-### Example 5 — Named Groups
+### Example 5 — Named Groups [details named groups](./12/2_named_groups_in_python_regex.md)
 
 ```python
 pattern = r"User: (?P<name>\w+), Age: (?P<age>\d+)"
