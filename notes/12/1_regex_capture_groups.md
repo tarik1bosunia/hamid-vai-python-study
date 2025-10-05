@@ -131,6 +131,7 @@ alice
 This way, instead of remembering group numbers, you can refer to names (`'name'`, `'age'`).
 
 ---
+Note: if you want to know more about named groups click here: [named groups](./2_named_groups_in_python_regex.md)
 
 ## 🧠 Key Takeaways
 
