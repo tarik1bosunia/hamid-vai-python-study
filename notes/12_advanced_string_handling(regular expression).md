@@ -76,7 +76,7 @@ print(re.match(r"abc", s))   # Match only at the start
 print(re.search(r"123", s))  # Search anywhere in the string
 ```
 
-### Example 4 — Capture Groups
+### Example 4 — Capture Groups: [see details group capture](./12/1_regex_capture_groups.md)
 
 ```python
 log = "User: alice, Age: 21"
