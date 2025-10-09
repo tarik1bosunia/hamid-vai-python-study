@@ -60,7 +60,7 @@ print(acc(2))  # 17
 
 ---
 
-## 3) Mutable Default Arguments (Common Gotcha)
+## 3) Mutable Default Arguments (Common Gotcha): [See Details](./3_mutable_default_argument.md)
 
 ```python
 # Bad: the same list persists across calls
