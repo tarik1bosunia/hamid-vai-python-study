@@ -32,7 +32,7 @@ signature_demo(1, 2, 3, 4, 5, scale=10, debug=True)
 
 ---
 
-## 2) Scope: local, nonlocal, global
+## 2) Scope: local, nonlocal, global: [see details](./2_python_variable_scope.md)
 
 ```python
 counter = 0  # global
