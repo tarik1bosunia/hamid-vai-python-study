@@ -100,7 +100,7 @@ print(norm.__doc__)
 
 ---
 
-## 5) Recursion (with and without memoization)
+## 5) Recursion (with and without memoization) : [See Details LRU Cache](./4_lru_cache.md)
 
 ```python
 # Basic recursion
