@@ -113,6 +113,8 @@ print(square(5))   # 25
 
 ---
 
+### Note: if you want get more advace knowedge in function you can check it- [functiton part2 -deep dive](./8/function_part2_deep_dive.md)
+
 ### 📝 Practice Tasks (Day 8)
 
 1. Write a function that takes two numbers and returns their product.
