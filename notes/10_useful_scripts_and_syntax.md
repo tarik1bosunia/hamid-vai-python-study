@@ -161,10 +161,18 @@ print("Evens:", evens)
 6. Write a script to find the second largest number in a list.
 
 
-### see this also 
-- [1. range function in python](./10/1_range_function_in_python.md)
-- [2. join function in python](./10/2_join_in_python.md)
-- [3. escape sequence](./10/3_escape_sequences.md)
-- [4. Escaping Braces in f-String](./10/4_Escaping%20Braces%20in%20f-Strings.md)
-- [5. 10/5_python_identifier_naming_rules_and_conventions](./10/5_python_identifier_naming_rules_and_conventions.md)
+
+## Here are some useful reference links to explore related Python concepts:
+
+| 🔢 No. | 🧩 Topic                                         | 📂 Link                                                            |
+| :----: | :----------------------------------------------- | :----------------------------------------------------------------- |
+|    1   | **Range Function in Python**                     | [Open →](./10/1_range_function_in_python.md)                       |
+|    2   | **Join Function in Python**                      | [Open →](./10/2_join_in_python.md)                                 |
+|    3   | **Escape Sequences**                             | [Open →](./10/3_escape_sequences.md)                               |
+|    4   | **Escaping Braces in f-Strings**                 | [Open →](./10/4_Escaping%20Braces%20in%20f-Strings.md)             |
+|    5   | **Python Identifier Naming Rules & Conventions** | [Open →](./10/5_python_identifier_naming_rules_and_conventions.md) |
+
+---
+
+
 
