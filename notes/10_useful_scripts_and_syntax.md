@@ -159,3 +159,8 @@ print("Evens:", evens)
 4. Write a function to count vowels in a sentence.
 5. Generate a list of cubes of numbers 1–10 using list comprehension.
 6. Write a script to find the second largest number in a list.
+
+
+### see this also 
+[1. range function in python](./10/1_range_function_in_python.md)
+
