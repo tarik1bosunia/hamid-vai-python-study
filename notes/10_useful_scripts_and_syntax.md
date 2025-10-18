@@ -162,9 +162,9 @@ print("Evens:", evens)
 
 
 ### see this also 
-[1. range function in python](./10/1_range_function_in_python.md)
-[2. join function in python](./10/2_join_in_python.md)
-[3. escape sequence](./10/3_escape_sequences.md)
-[4. Escaping Braces in f-String](./10/4_Escaping Braces in f-Strings.md)
-[5. 10/5_python_identifier_naming_rules_and_conventions](./10/5_python_identifier_naming_rules_and_conventions.md)
+- [1. range function in python](./10/1_range_function_in_python.md)
+- [2. join function in python](./10/2_join_in_python.md)
+- [3. escape sequence](./10/3_escape_sequences.md)
+- [4. Escaping Braces in f-String](./10/4_Escaping Braces in f-Strings.md)
+- [5. 10/5_python_identifier_naming_rules_and_conventions](./10/5_python_identifier_naming_rules_and_conventions.md)
 
