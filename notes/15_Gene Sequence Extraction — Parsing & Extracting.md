@@ -112,6 +112,17 @@ print(find_motifs(seq, r"TATA"))  # [(7, 10, 'TATA'), (17, 20, 'TATA')]
 ---
 
 ## ✅ 5) Extract All ORFs (Simple, 5'→3', Start ATG, Stop TAA/TAG/TGA)
+```
+The function find_orfs finds Open Reading Frames (ORFs) in a given DNA sequence.
+
+An ORF is a stretch of DNA that:
+
+Starts with a start codon "ATG"
+
+Ends with one of the stop codons: "TAA", "TAG", or "TGA"
+
+Has a length of at least a given number of codons (min_len_codons)
+```
 
 ```python
 def find_orfs(seq: str, min_len_codons: int = 50) -> list[tuple[int,int,str]]:
