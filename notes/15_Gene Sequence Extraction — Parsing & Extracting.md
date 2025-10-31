@@ -158,6 +158,10 @@ def extract_batch(records: dict, ids: list[str]) -> dict:
     return {gid: records[gid] for gid in ids if gid in records}
 
 ids = ["gene2", "geneX"]
+records = {
+    "gene1": "ATGCTAGC",
+    "gene2": "ATTTGCGC"
+}
 print(extract_batch(records, ids))  # {'gene2': 'ATTTGCGC'}
 ```
 
