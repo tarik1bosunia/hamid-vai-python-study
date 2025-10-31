@@ -145,8 +145,8 @@ def find_orfs(seq: str, min_len_codons: int = 50) -> list[tuple[int,int,str]]:
         i += 1
     return orfs
 
-seq = "AAAATGAAACCCGGGTTTTAGCCCATGAAA..."  # example
-# print(find_orfs(seq, min_len_codons=10))
+seq = "AAAATGAAACCCGGGTTTTAGCCCATGAAATTTTAA"
+print(find_orfs(seq, min_len_codons=2))
 ```
 
 ---
