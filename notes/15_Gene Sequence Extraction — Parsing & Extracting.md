@@ -255,7 +255,7 @@ ATTTGCGCGGGTAG
 
 ---
 
-## 🧰 9) Optional: Biopython Approach (if allowed)
+## 🧰 9) Biopython Approach
 
 > Install in Colab: `!pip install biopython`
 
