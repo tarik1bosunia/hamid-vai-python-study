@@ -111,7 +111,7 @@ print(find_motifs(seq, r"TATA"))  # [(7, 10, 'TATA'), (17, 20, 'TATA')]
 
 ---
 
-## ✅ 5) Extract All ORFs (Simple, 5'→3', Start ATG, Stop TAA/TAG/TGA)
+## ✅ 5) Extract All ORFs (Simple, 5'→3', Start ATG, Stop TAA/TAG/TGA): [see details: ORF](./15/1_orf.md)
 ```
 The function find_orfs finds Open Reading Frames (ORFs) in a given DNA sequence.
 
