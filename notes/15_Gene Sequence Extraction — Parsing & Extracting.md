@@ -169,6 +169,8 @@ print(extract_batch(records, ids))  # {'gene2': 'ATTTGCGC'}
 
 ## ✅ 7) Write Extracted Sequences to FASTA
 
+
+
 ```python
 def to_fasta(records: dict) -> str:
     lines = []
@@ -181,6 +183,65 @@ def to_fasta(records: dict) -> str:
 
 print(to_fasta({"gene2": records['gene2']}))
 ```
+---
+
+### 🧬 Example `records` Dictionary for FASTA Extraction
+
+Here’s a realistic example of a **`records`** dictionary that works perfectly with your previously defined functions — `extract_batch()` and `to_fasta()`.
+
+---
+
+#### 🧩 Example Python Dictionary
+
+```python
+records = {
+    "gene1": "ATGCTAGCTAGCTTAA",
+    "gene2": "ATTTGCGCGGGTAG",
+    "gene3": "ATGAAATTTCCCGGGTGATAA"
+}
+```
+
+---
+
+#### 🧪 Convert to FASTA Format
+
+```python
+print(to_fasta(records))
+```
+
+#### ✅ Output
+
+```
+>gene1
+ATGCTAGCTAGCTTAA
+>gene2
+ATTTGCGCGGGTAG
+>gene3
+ATGAAATTTCCCGGGTGATAA
+```
+
+---
+
+## Example: Extract Specific IDs and Convert
+
+```python
+ids = ["gene2", "geneX"]
+subset = extract_batch(records, ids)
+print(subset)
+print()
+print(to_fasta(subset))
+```
+
+### ✅ Output
+
+```
+{'gene2': 'ATTTGCGCGGGTAG'}
+
+>gene2
+ATTTGCGCGGGTAG
+```
+
+
 
 ---
 
