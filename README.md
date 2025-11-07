@@ -60,3 +60,4 @@ Top-level notes:
 
 - [1 orf](<./notes/15/1_orf.md>)
 - [2 fasta file format](<./notes/15/2_fasta_file_format.md>)
+- [3 transcription translation](<./notes/15/3_transcribe_vs_translate.md>)
