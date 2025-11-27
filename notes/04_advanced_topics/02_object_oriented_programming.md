@@ -1,1190 +1,777 @@
-# Python Object-Oriented Programming (OOP) — A Practical Guide
+# Day 18: Object-Oriented Programming for Bioinformatics
 
-> **📚 Learning Objective**: Master OOP concepts to write cleaner, more maintainable, and reusable Python code.
+## 🧬 Build Reusable Biological Classes
 
-OOP helps you model real-world concepts as Python objects. This guide is hands-on: short explanations followed by runnable examples and gotchas. Feel free to copy, paste, and experiment.
+Object-Oriented Programming (OOP) enables you to create **reusable, modular code** for bioinformatics. Design classes for sequences, genes, proteins, and analyses that encapsulate data and behavior together - essential for large-scale computational biology projects.
 
----
+### Why OOP for Bioinformatics?
 
-## 📑 Table of Contents
-
-1. [What is OOP?](#what-is-oop)
-2. [Classes and Objects](#classes-and-objects)
-3. [The `__init__` Method (Constructor)](#the-__init__-method-constructor)
-4. [Instance Attributes vs Class Attributes](#instance-attributes-vs-class-attributes)
-5. [Methods](#methods)
-6. [The `self` Parameter](#the-self-parameter)
-7. [Encapsulation](#encapsulation)
-8. [Inheritance](#inheritance)
-9. [Polymorphism](#polymorphism)
-10. [Special Methods (Magic/Dunder Methods)](#special-methods-magicdunder-methods)
-11. [Class Methods and Static Methods](#class-methods-and-static-methods)
-12. [Property Decorators](#property-decorators)
-13. [Real-World Example: DNA Sequence Analyzer](#real-world-example-dna-sequence-analyzer)
-14. [Common Pitfalls and Best Practices](#common-pitfalls-and-best-practices)
+- **Data Encapsulation**: Bundle sequence data with methods (e.g., `dna.transcribe()`)
+- **Code Reuse**: Write once, use many times (DRY principle)
+- **Inheritance**: Create specialized classes (DNA → Gene → Transcript)
+- **Maintainability**: Easier to debug and extend
+- **Real Libraries**: BioPython, pandas, scikit-bio all use OOP
 
 ---
 
-## What is OOP?
+## 🎯 Learning Objectives
 
-**Object-Oriented Programming (OOP)** is a programming paradigm that organizes code around **objects** (data + behavior) rather than functions and logic alone.
+By the end of this guide, you will:
 
-### Why Use OOP?
-
-✅ **Modularity**: Code is organized into reusable classes  
-✅ **Maintainability**: Changes are localized to specific classes  
-✅ **Reusability**: Inherit and extend existing classes  
-✅ **Abstraction**: Hide complex implementation details  
-
-### Four Pillars of OOP
-
-1. **Encapsulation** - Bundling data and methods together
-2. **Inheritance** - Creating new classes from existing ones
-3. **Polymorphism** - Same interface, different implementations
-4. **Abstraction** - Hiding complex details, showing only essentials
+✓ Understand classes, objects, and instances  
+✓ Create biological sequence classes  
+✓ Implement methods for sequence operations  
+✓ Use inheritance for specialized sequences  
+✓ Apply encapsulation and data protection  
+✓ Build complete gene/protein analysis tools  
+✓ Design professional bioinformatics APIs  
 
 ---
 
-## Classes and Objects
+## 🧩 Part 1: Class Basics
 
-### What is a Class?
-
-A **class** is a blueprint for creating objects. It defines attributes (data) and methods (behavior).
-
-### What is an Object?
-
-An **object** is an instance of a class. You can create multiple objects from one class.
-
-### Basic Syntax
-
-```python
-# Define a class
-class Dog:
-    pass  # Empty class for now
-
-# Create objects (instances)
-dog1 = Dog()
-dog2 = Dog()
-
-print(dog1)  # <__main__.Dog object at 0x...>
-print(dog2)  # <__main__.Dog object at 0x...>
-print(dog1 == dog2)  # False (different objects)
-```
-
-**Key Point**: Each object has a unique memory address.
-
----
-
-## The `__init__` Method (Constructor)
-
-The `__init__` method is called automatically when you create a new object. It initializes the object's attributes.
-
-### Syntax
-
-```python
-class Dog:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-
-# Create objects with initial values
-dog1 = Dog("Buddy", 3)
-dog2 = Dog("Max", 5)
-
-print(dog1.name)  # Buddy
-print(dog2.age)   # 5
-```
-
-### With Default Parameters
-
-```python
-class Dog:
-    def __init__(self, name, age=0):
-        self.name = name
-        self.age = age
-
-dog1 = Dog("Buddy")  # age defaults to 0
-dog2 = Dog("Max", 5)
-
-print(dog1.age)  # 0
-print(dog2.age)  # 5
-```
-
----
-
-## Instance Attributes vs Class Attributes
-
-### Instance Attributes
-
-- Unique to each object
-- Defined in `__init__` using `self`
-
-### Class Attributes
-
-- Shared by all instances of the class
-- Defined directly in the class body
-
-### Example
-
-```python
-class Dog:
-    species = "Canis familiaris"  # Class attribute (shared)
-    
-    def __init__(self, name, age):
-        self.name = name  # Instance attribute (unique)
-        self.age = age    # Instance attribute (unique)
-
-dog1 = Dog("Buddy", 3)
-dog2 = Dog("Max", 5)
-
-# Instance attributes are different
-print(dog1.name)  # Buddy
-print(dog2.name)  # Max
-
-# Class attribute is shared
-print(dog1.species)  # Canis familiaris
-print(dog2.species)  # Canis familiaris
-print(Dog.species)   # Canis familiaris
-
-# Modifying class attribute affects all instances
-Dog.species = "Canis lupus"
-print(dog1.species)  # Canis lupus
-print(dog2.species)  # Canis lupus
-```
-
-### ⚠️ Common Pitfall: Mutable Class Attributes
-
-```python
-# ❌ WRONG: Don't use mutable defaults as class attributes
-class Dog:
-    tricks = []  # Shared by all instances!
-    
-    def add_trick(self, trick):
-        self.tricks.append(trick)
-
-dog1 = Dog()
-dog2 = Dog()
-
-dog1.add_trick("sit")
-print(dog2.tricks)  # ['sit'] - UNEXPECTED!
-
-# ✅ CORRECT: Use instance attributes
-class Dog:
-    def __init__(self):
-        self.tricks = []  # Each instance has its own list
-    
-    def add_trick(self, trick):
-        self.tricks.append(trick)
-
-dog1 = Dog()
-dog2 = Dog()
-
-dog1.add_trick("sit")
-print(dog1.tricks)  # ['sit']
-print(dog2.tricks)  # [] - EXPECTED!
-```
-
----
-
-## Methods
-
-Methods are functions defined inside a class. They define the behavior of objects.
-
-### Instance Methods
-
-- Operate on instance data
-- First parameter is always `self`
-
-```python
-class Dog:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-    
-    def bark(self):
-        return f"{self.name} says Woof!"
-    
-    def get_age_in_human_years(self):
-        return self.age * 7
-
-dog = Dog("Buddy", 3)
-print(dog.bark())  # Buddy says Woof!
-print(dog.get_age_in_human_years())  # 21
-```
-
-### Methods with Parameters
-
-```python
-class Dog:
-    def __init__(self, name):
-        self.name = name
-    
-    def greet(self, person_name):
-        return f"{self.name} greets {person_name}!"
-
-dog = Dog("Buddy")
-print(dog.greet("Alice"))  # Buddy greets Alice!
-```
-
----
-
-## The `self` Parameter
-
-`self` refers to the current instance of the class. It gives you access to the instance's attributes and methods.
-
-### Why `self`?
-
-- Python doesn't automatically know which object you're working with
-- `self` makes it explicit
-
-```python
-class Counter:
-    def __init__(self):
-        self.count = 0
-    
-    def increment(self):
-        self.count += 1  # self.count refers to this instance's count
-    
-    def get_count(self):
-        return self.count
-
-c1 = Counter()
-c2 = Counter()
-
-c1.increment()
-c1.increment()
-c2.increment()
-
-print(c1.get_count())  # 2
-print(c2.get_count())  # 1
-```
-
-### 💡 Note
-
-- You can name it anything, but `self` is the convention
-- Python automatically passes the instance as the first argument
-
-```python
-class Test:
-    def method(this):  # 'this' instead of 'self' (not recommended)
-        print(this)
-
-obj = Test()
-obj.method()  # Works, but don't do this!
-```
-
----
-
-## Encapsulation
-
-**Encapsulation** means bundling data and methods together, and controlling access to them.
-
-### Public, Protected, and Private
-
-In Python, access control is by convention:
-
-| Prefix | Type | Access | Example |
-|--------|------|--------|---------|
-| None | Public | Anyone can access | `self.name` |
-| `_` | Protected | Internal use (by convention) | `self._age` |
-| `__` | Private | Name mangled | `self.__secret` |
-
-### Example
-
-```python
-class BankAccount:
-    def __init__(self, owner, balance):
-        self.owner = owner          # Public
-        self._account_id = "12345"  # Protected (convention)
-        self.__balance = balance     # Private (name mangled)
-    
-    def deposit(self, amount):
-        if amount > 0:
-            self.__balance += amount
-            return True
-        return False
-    
-    def get_balance(self):
-        return self.__balance
-
-account = BankAccount("Alice", 1000)
-
-# Public access
-print(account.owner)  # Alice
-
-# Protected access (still accessible, but discouraged)
-print(account._account_id)  # 12345
-
-# Private access (not directly accessible)
-# print(account.__balance)  # AttributeError!
-
-# Use public methods instead
-print(account.get_balance())  # 1000
-account.deposit(500)
-print(account.get_balance())  # 1500
-
-# Name mangling reveals the private attribute (don't do this!)
-print(account._BankAccount__balance)  # 1500
-```
-
-### Why Encapsulation?
-
-✅ Control how data is accessed and modified  
-✅ Prevent accidental changes  
-✅ Hide implementation details  
-✅ Make refactoring easier  
-
----
-
-## Inheritance
-
-**Inheritance** allows you to create a new class based on an existing class.
-
-- **Parent/Base/Super Class**: The class being inherited from
-- **Child/Derived/Sub Class**: The class that inherits
-
-### Basic Inheritance
-
-```python
-# Parent class
-class Animal:
-    def __init__(self, name):
-        self.name = name
-    
-    def speak(self):
-        return "Some sound"
-
-# Child class
-class Dog(Animal):
-    def speak(self):  # Override parent method
-        return f"{self.name} says Woof!"
-
-class Cat(Animal):
-    def speak(self):
-        return f"{self.name} says Meow!"
-
-dog = Dog("Buddy")
-cat = Cat("Whiskers")
-
-print(dog.speak())  # Buddy says Woof!
-print(cat.speak())  # Whiskers says Meow!
-```
-
-### Using `super()`
-
-`super()` lets you call methods from the parent class.
-
-```python
-class Animal:
-    def __init__(self, name, species):
-        self.name = name
-        self.species = species
-    
-    def info(self):
-        return f"{self.name} is a {self.species}"
-
-class Dog(Animal):
-    def __init__(self, name, breed):
-        super().__init__(name, "Dog")  # Call parent __init__
-        self.breed = breed
-    
-    def info(self):
-        base_info = super().info()  # Call parent method
-        return f"{base_info} of breed {self.breed}"
-
-dog = Dog("Buddy", "Golden Retriever")
-print(dog.info())  # Buddy is a Dog of breed Golden Retriever
-```
-
-### Multiple Inheritance
-
-Python supports multiple inheritance (inheriting from multiple classes).
-
-```python
-class Flyer:
-    def fly(self):
-        return "Flying high!"
-
-class Swimmer:
-    def swim(self):
-        return "Swimming fast!"
-
-class Duck(Flyer, Swimmer):
-    def quack(self):
-        return "Quack!"
-
-duck = Duck()
-print(duck.fly())   # Flying high!
-print(duck.swim())  # Swimming fast!
-print(duck.quack()) # Quack!
-```
-
-### Method Resolution Order (MRO)
-
-```python
-class A:
-    def method(self):
-        return "A"
-
-class B(A):
-    def method(self):
-        return "B"
-
-class C(A):
-    def method(self):
-        return "C"
-
-class D(B, C):
-    pass
-
-d = D()
-print(d.method())  # B
-print(D.mro())     # Shows the order: D -> B -> C -> A -> object
-```
-
----
-
-## Polymorphism
-
-**Polymorphism** means "many forms". The same method name can behave differently in different classes.
-
-### Duck Typing
-
-"If it walks like a duck and quacks like a duck, it's a duck."
-
-```python
-class Dog:
-    def speak(self):
-        return "Woof!"
-
-class Cat:
-    def speak(self):
-        return "Meow!"
-
-class Duck:
-    def speak(self):
-        return "Quack!"
-
-def make_it_speak(animal):
-    print(animal.speak())  # Works with any object that has speak()
-
-dog = Dog()
-cat = Cat()
-duck = Duck()
-
-make_it_speak(dog)   # Woof!
-make_it_speak(cat)   # Meow!
-make_it_speak(duck)  # Quack!
-```
-
-### Polymorphism with Inheritance
-
-```python
-class Shape:
-    def area(self):
-        pass
-
-class Rectangle(Shape):
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-    
-    def area(self):
-        return self.width * self.height
-
-class Circle(Shape):
-    def __init__(self, radius):
-        self.radius = radius
-    
-    def area(self):
-        return 3.14 * self.radius ** 2
-
-shapes = [Rectangle(5, 10), Circle(7), Rectangle(3, 4)]
-
-for shape in shapes:
-    print(f"Area: {shape.area()}")
-
-# Output:
-# Area: 50
-# Area: 153.86
-# Area: 12
-```
-
----
-
-## Special Methods (Magic/Dunder Methods)
-
-Special methods (also called magic or dunder methods) start and end with double underscores (`__`). They let you customize how your objects behave.
-
-### Common Special Methods
-
-| Method | Purpose | Example |
-|--------|---------|---------|
-| `__init__` | Constructor | `obj = MyClass()` |
-| `__str__` | Human-readable string | `str(obj)`, `print(obj)` |
-| `__repr__` | Developer-friendly string | `repr(obj)` |
-| `__len__` | Length | `len(obj)` |
-| `__eq__` | Equality | `obj1 == obj2` |
-| `__lt__` | Less than | `obj1 < obj2` |
-| `__add__` | Addition | `obj1 + obj2` |
-| `__getitem__` | Indexing | `obj[key]` |
-| `__setitem__` | Setting items | `obj[key] = value` |
-| `__call__` | Make object callable | `obj()` |
-
-### Examples
-
-```python
-class Book:
-    def __init__(self, title, author, pages):
-        self.title = title
-        self.author = author
-        self.pages = pages
-    
-    def __str__(self):
-        # For end users
-        return f"{self.title} by {self.author}"
-    
-    def __repr__(self):
-        # For developers (should ideally recreate the object)
-        return f"Book('{self.title}', '{self.author}', {self.pages})"
-    
-    def __len__(self):
-        return self.pages
-    
-    def __eq__(self, other):
-        return self.title == other.title and self.author == other.author
-    
-    def __lt__(self, other):
-        return self.pages < other.pages
-
-book1 = Book("Python Crash Course", "Eric Matthes", 544)
-book2 = Book("Automate the Boring Stuff", "Al Sweigart", 592)
-book3 = Book("Python Crash Course", "Eric Matthes", 544)
-
-print(book1)              # Python Crash Course by Eric Matthes
-print(repr(book1))        # Book('Python Crash Course', 'Eric Matthes', 544)
-print(len(book1))         # 544
-print(book1 == book3)     # True
-print(book1 == book2)     # False
-print(book1 < book2)      # True (544 < 592)
-```
-
-### Arithmetic Operations
-
-```python
-class Vector:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-    
-    def __add__(self, other):
-        return Vector(self.x + other.x, self.y + other.y)
-    
-    def __mul__(self, scalar):
-        return Vector(self.x * scalar, self.y * scalar)
-    
-    def __str__(self):
-        return f"Vector({self.x}, {self.y})"
-
-v1 = Vector(2, 3)
-v2 = Vector(5, 7)
-
-v3 = v1 + v2
-print(v3)  # Vector(7, 10)
-
-v4 = v1 * 3
-print(v4)  # Vector(6, 9)
-```
-
-### Making Objects Callable
-
-```python
-class Multiplier:
-    def __init__(self, factor):
-        self.factor = factor
-    
-    def __call__(self, x):
-        return x * self.factor
-
-double = Multiplier(2)
-triple = Multiplier(3)
-
-print(double(5))  # 10
-print(triple(5))  # 15
-```
-
----
-
-## Class Methods and Static Methods
-
-### Instance Methods
-
-- Work with instance data
-- First parameter is `self`
-
-### Class Methods
-
-- Work with class data
-- First parameter is `cls`
-- Decorated with `@classmethod`
-- Can be used as alternative constructors
-
-### Static Methods
-
-- Don't work with instance or class data
-- No special first parameter
-- Decorated with `@staticmethod`
-- Used for utility functions
-
-### Example
-
-```python
-class Date:
-    def __init__(self, year, month, day):
-        self.year = year
-        self.month = month
-        self.day = day
-    
-    # Instance method
-    def display(self):
-        return f"{self.year}-{self.month:02d}-{self.day:02d}"
-    
-    # Class method (alternative constructor)
-    @classmethod
-    def from_string(cls, date_string):
-        year, month, day = map(int, date_string.split('-'))
-        return cls(year, month, day)
-    
-    # Static method (utility function)
-    @staticmethod
-    def is_leap_year(year):
-        return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
-
-# Using instance method
-date1 = Date(2024, 3, 15)
-print(date1.display())  # 2024-03-15
-
-# Using class method
-date2 = Date.from_string("2024-12-25")
-print(date2.display())  # 2024-12-25
-
-# Using static method
-print(Date.is_leap_year(2024))  # True
-print(Date.is_leap_year(2023))  # False
-```
-
-### When to Use Each?
-
-| Type | When to Use |
-|------|-------------|
-| **Instance Method** | Needs access to instance data (`self`) |
-| **Class Method** | Needs access to class data or alternative constructor |
-| **Static Method** | Related to the class but doesn't need instance or class data |
-
----
-
-## Property Decorators
-
-**Properties** let you add getter, setter, and deleter methods to an attribute, making it look like a simple attribute from outside.
-
-### Without Properties (Ugly)
-
-```python
-class Temperature:
-    def __init__(self, celsius):
-        self._celsius = celsius
-    
-    def get_celsius(self):
-        return self._celsius
-    
-    def set_celsius(self, value):
-        if value < -273.15:
-            raise ValueError("Temperature below absolute zero!")
-        self._celsius = value
-
-temp = Temperature(25)
-print(temp.get_celsius())  # 25
-temp.set_celsius(30)
-print(temp.get_celsius())  # 30
-```
-
-### With Properties (Clean)
-
-```python
-class Temperature:
-    def __init__(self, celsius):
-        self._celsius = celsius
-    
-    @property
-    def celsius(self):
-        return self._celsius
-    
-    @celsius.setter
-    def celsius(self, value):
-        if value < -273.15:
-            raise ValueError("Temperature below absolute zero!")
-        self._celsius = value
-    
-    @property
-    def fahrenheit(self):
-        return self._celsius * 9/5 + 32
-
-temp = Temperature(25)
-print(temp.celsius)      # 25 (looks like an attribute!)
-print(temp.fahrenheit)   # 77.0
-
-temp.celsius = 30        # Uses setter
-print(temp.celsius)      # 30
-
-# temp.celsius = -300    # ValueError!
-```
-
-### Read-Only Property
-
-```python
-class Circle:
-    def __init__(self, radius):
-        self._radius = radius
-    
-    @property
-    def radius(self):
-        return self._radius
-    
-    @property
-    def area(self):
-        return 3.14 * self._radius ** 2
-    
-    @property
-    def circumference(self):
-        return 2 * 3.14 * self._radius
-
-circle = Circle(5)
-print(circle.radius)         # 5
-print(circle.area)           # 78.5
-print(circle.circumference)  # 31.400000000000002
-
-# circle.area = 100  # AttributeError (read-only)
-```
-
----
-
-## Real-World Example: DNA Sequence Analyzer
-
-Let's build a practical bioinformatics class that uses OOP principles.
+### Creating Your First Class
 
 ```python
 class DNASequence:
-    """
-    A class to represent and analyze DNA sequences.
-    """
+    """Represents a DNA sequence"""
     
-    # Class attribute: valid nucleotides
-    VALID_NUCLEOTIDES = set("ATCG")
+    def __init__(self, sequence):
+        """Constructor - called when creating new instance"""
+        self.sequence = sequence.upper()
     
-    def __init__(self, sequence, name="Unnamed"):
-        """
-        Initialize a DNA sequence.
-        
-        Args:
-            sequence (str): DNA sequence string
-            name (str): Name/ID of the sequence
-        """
-        self.name = name
-        self.sequence = sequence.upper().strip()
-        self._validate()
-    
-    def _validate(self):
-        """Private method to validate the sequence."""
-        invalid = set(self.sequence) - self.VALID_NUCLEOTIDES
-        if invalid:
-            raise ValueError(f"Invalid nucleotides found: {invalid}")
-    
-    @property
-    def length(self):
-        """Get the length of the sequence."""
+    def get_length(self):
+        """Return sequence length"""
         return len(self.sequence)
     
-    @property
-    def gc_content(self):
-        """Calculate GC content as a percentage."""
-        if self.length == 0:
-            return 0.0
-        gc_count = self.sequence.count('G') + self.sequence.count('C')
-        return (gc_count / self.length) * 100
-    
-    def complement(self):
-        """Return the complement sequence."""
-        complement_map = {'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G'}
-        return ''.join(complement_map[base] for base in self.sequence)
-    
-    def reverse_complement(self):
-        """Return the reverse complement sequence."""
-        return self.complement()[::-1]
-    
-    def transcribe(self):
-        """Transcribe DNA to RNA (T -> U)."""
-        return self.sequence.replace('T', 'U')
-    
-    def count_nucleotides(self):
-        """Return a dictionary of nucleotide counts."""
-        return {
-            'A': self.sequence.count('A'),
-            'T': self.sequence.count('T'),
-            'G': self.sequence.count('G'),
-            'C': self.sequence.count('C')
-        }
-    
-    @classmethod
-    def from_file(cls, filename):
-        """
-        Alternative constructor: create DNA sequence from a file.
-        
-        Args:
-            filename (str): Path to file containing DNA sequence
-        
-        Returns:
-            DNASequence: New DNASequence object
-        """
-        with open(filename, 'r') as f:
-            lines = f.readlines()
-            name = lines[0].strip().lstrip('>')
-            sequence = ''.join(line.strip() for line in lines[1:])
-        return cls(sequence, name)
-    
-    def __str__(self):
-        """User-friendly string representation."""
-        preview = self.sequence[:50] + "..." if self.length > 50 else self.sequence
-        return f"{self.name}: {preview} (Length: {self.length})"
-    
-    def __repr__(self):
-        """Developer-friendly representation."""
-        return f"DNASequence('{self.sequence[:20]}...', '{self.name}')"
-    
-    def __len__(self):
-        """Support len() function."""
-        return self.length
-    
-    def __eq__(self, other):
-        """Support equality comparison."""
-        return self.sequence == other.sequence
-    
-    def __add__(self, other):
-        """Support concatenation with + operator."""
-        new_seq = self.sequence + other.sequence
-        new_name = f"{self.name}+{other.name}"
-        return DNASequence(new_seq, new_name)
-    
-    def __getitem__(self, index):
-        """Support indexing and slicing."""
-        return self.sequence[index]
+    def get_gc_content(self):
+        """Calculate GC content percentage"""
+        g_count = self.sequence.count('G')
+        c_count = self.sequence.count('C')
+        return (g_count + c_count) / len(self.sequence) * 100
 
+# Create instances (objects)
+seq1 = DNASequence("ATCGATCG")
+seq2 = DNASequence("gctagcta")
 
-# Usage examples
-if __name__ == "__main__":
-    # Create a DNA sequence
-    dna = DNASequence("ATCGATCGATCG", "Sample1")
-    
-    print(dna)  # Sample1: ATCGATCGATCG (Length: 12)
-    print(f"Length: {len(dna)}")  # 12
-    print(f"GC Content: {dna.gc_content:.2f}%")  # 50.00%
-    
-    print(f"Complement: {dna.complement()}")  # TAGCTAGCTAGC
-    print(f"Reverse Complement: {dna.reverse_complement()}")  # CGATCGATCGAT
-    print(f"RNA: {dna.transcribe()}")  # AUCGAUCGAUCG
-    
-    print(f"Nucleotide counts: {dna.count_nucleotides()}")
-    # {'A': 3, 'T': 3, 'G': 3, 'C': 3}
-    
-    # Indexing
-    print(f"First nucleotide: {dna[0]}")  # A
-    print(f"First 6 bases: {dna[:6]}")    # ATCGAT
-    
-    # Concatenation
-    dna2 = DNASequence("GGCCTTAA", "Sample2")
-    combined = dna + dna2
-    print(combined)  # Sample1+Sample2: ATCGATCGATCGGGCCTTAA (Length: 20)
-    
-    # Comparison
-    dna3 = DNASequence("ATCGATCGATCG", "Sample3")
-    print(dna == dna3)  # True (same sequence)
-    print(dna == dna2)  # False (different sequence)
+print(f"Sequence 1: {seq1.sequence}, Length: {seq1.get_length()}")
+print(f"GC content: {seq1.get_gc_content():.2f}%")
+
+print(f"Sequence 2: {seq2.sequence}, Length: {seq2.get_length()}")
 ```
 
-### Key OOP Concepts Used
-
-✅ **Encapsulation**: Private validation method (`_validate`)  
-✅ **Properties**: Computed attributes (`length`, `gc_content`)  
-✅ **Class Methods**: Alternative constructor (`from_file`)  
-✅ **Special Methods**: `__str__`, `__repr__`, `__len__`, `__eq__`, `__add__`, `__getitem__`  
-✅ **Class Attributes**: Shared constants (`VALID_NUCLEOTIDES`)  
-
----
-
-## Common Pitfalls and Best Practices
-
-### ❌ Pitfall 1: Mutable Default Arguments
-
-```python
-# WRONG
-class DNACollection:
-    def __init__(self, sequences=[]):  # DON'T DO THIS!
-        self.sequences = sequences
-
-# All instances share the same list!
-col1 = DNACollection()
-col2 = DNACollection()
-col1.sequences.append("ATCG")
-print(col2.sequences)  # ['ATCG'] - UNEXPECTED!
-
-# ✅ CORRECT
-class DNACollection:
-    def __init__(self, sequences=None):
-        self.sequences = sequences if sequences is not None else []
-```
-
-### ❌ Pitfall 2: Forgetting `self`
-
-```python
-# WRONG
-class Dog:
-    def __init__(self, name):
-        name = name  # Missing self!
-    
-    def bark(self):
-        print(name)  # Missing self!
-
-# ✅ CORRECT
-class Dog:
-    def __init__(self, name):
-        self.name = name
-    
-    def bark(self):
-        print(self.name)
-```
-
-### ❌ Pitfall 3: Modifying Class Attributes Incorrectly
-
-```python
-class Counter:
-    count = 0  # Class attribute
-    
-    def __init__(self):
-        self.count += 1  # Creates instance attribute!
-
-# ✅ CORRECT
-class Counter:
-    count = 0
-    
-    def __init__(self):
-        Counter.count += 1  # Modifies class attribute
-```
-
-### ✅ Best Practice 1: Use Properties for Computed Attributes
-
-```python
-# GOOD
-class Circle:
-    def __init__(self, radius):
-        self.radius = radius
-    
-    @property
-    def area(self):
-        return 3.14 * self.radius ** 2
-```
-
-### ✅ Best Practice 2: Use `__repr__` for Debugging
+### The __init__ Constructor
 
 ```python
 class Gene:
-    def __init__(self, name, sequence):
+    """Represents a gene with metadata"""
+    
+    def __init__(self, gene_id, name, sequence, chromosome=""):
+        """
+        Initialize gene
+        
+        Parameters:
+            gene_id: Unique identifier (e.g., 'ENSG00000139618')
+            name: Gene symbol (e.g., 'BRCA2')
+            sequence: DNA sequence
+            chromosome: Chromosome location (optional)
+        """
+        self.gene_id = gene_id
         self.name = name
-        self.sequence = sequence
+        self.sequence = sequence.upper()
+        self.chromosome = chromosome
+    
+    def __str__(self):
+        """String representation for print()"""
+        return f"Gene({self.name}, {self.gene_id}, {len(self.sequence)} bp)"
     
     def __repr__(self):
-        return f"Gene(name='{self.name}', sequence='{self.sequence[:20]}...')"
+        """Official representation for debugging"""
+        return f"Gene(gene_id='{self.gene_id}', name='{self.name}')"
+
+# Create gene instance
+brca2 = Gene("ENSG00000139618", "BRCA2", "ATCGATCGATCG", "chr13")
+
+print(brca2)  # Uses __str__
+print(repr(brca2))  # Uses __repr__
+print(f"Chromosome: {brca2.chromosome}")
 ```
 
-### ✅ Best Practice 3: Prefer Composition Over Inheritance
-
-Sometimes it's better to include an object rather than inherit from it.
+### Instance vs Class Variables
 
 ```python
-# Instead of inheriting
-class Dog(list):  # Is a dog really a list?
-    pass
+class Sequence:
+    """Biological sequence with class-level statistics"""
+    
+    # Class variable (shared by all instances)
+    total_sequences = 0
+    valid_bases = set('ATCGN')
+    
+    def __init__(self, sequence, seq_id=""):
+        # Instance variables (unique to each instance)
+        self.sequence = sequence.upper()
+        self.seq_id = seq_id
+        self.length = len(sequence)
+        
+        # Increment class variable
+        Sequence.total_sequences += 1
+    
+    @classmethod
+    def get_total_count(cls):
+        """Class method - operates on class, not instance"""
+        return cls.total_sequences
+    
+    @staticmethod
+    def is_valid_base(base):
+        """Static method - doesn't need class or instance"""
+        return base.upper() in Sequence.valid_bases
 
-# Use composition
-class Dog:
-    def __init__(self):
-        self.tricks = []  # Has a list
+# Test
+seq1 = Sequence("ATCG", "seq1")
+seq2 = Sequence("GCTA", "seq2")
+seq3 = Sequence("TAGC", "seq3")
+
+print(f"Total sequences created: {Sequence.get_total_count()}")
+print(f"Is 'A' valid? {Sequence.is_valid_base('A')}")
+print(f"Is 'X' valid? {Sequence.is_valid_base('X')}")
 ```
-
-### ✅ Best Practice 4: Follow Naming Conventions
-
-- Class names: `PascalCase` (e.g., `DNASequence`)
-- Methods/attributes: `snake_case` (e.g., `gc_content`)
-- Private: `_single_underscore` (e.g., `_validate`)
-- Name mangling: `__double_underscore` (e.g., `__private_data`)
-- Constants: `UPPER_CASE` (e.g., `MAX_LENGTH`)
 
 ---
 
-## 📝 Practice Exercises
+## 🧩 Part 2: Methods & Functionality
 
-### Exercise 1: Student Class
-
-Create a `Student` class with:
-- Attributes: `name`, `age`, `grades` (list)
-- Methods: `add_grade()`, `average_grade()`, `is_passing()` (average >= 60)
-
-<details>
-<summary>Solution</summary>
+### DNA Sequence Class
 
 ```python
-class Student:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-        self.grades = []
+class DNA:
+    """Complete DNA sequence class"""
     
-    def add_grade(self, grade):
-        if 0 <= grade <= 100:
-            self.grades.append(grade)
-        else:
-            raise ValueError("Grade must be between 0 and 100")
+    def __init__(self, sequence, seq_id=""):
+        self.sequence = sequence.upper()
+        self.seq_id = seq_id
     
-    def average_grade(self):
-        if not self.grades:
-            return 0
-        return sum(self.grades) / len(self.grades)
+    def __len__(self):
+        """Enable len(dna)"""
+        return len(self.sequence)
     
-    def is_passing(self):
-        return self.average_grade() >= 60
+    def __getitem__(self, index):
+        """Enable indexing and slicing: dna[0], dna[1:10]"""
+        return self.sequence[index]
     
-    def __str__(self):
-        return f"{self.name} (Age: {self.age}, Average: {self.average_grade():.2f})"
+    def transcribe(self):
+        """Convert DNA to RNA (T -> U)"""
+        rna_seq = self.sequence.replace('T', 'U')
+        return RNA(rna_seq, self.seq_id)
+    
+    def reverse_complement(self):
+        """Return reverse complement"""
+        complement_map = str.maketrans('ATCG', 'TAGC')
+        complement = self.sequence.translate(complement_map)
+        return DNA(complement[::-1], f"{self.seq_id}_rc")
+    
+    def gc_content(self):
+        """Calculate GC percentage"""
+        g = self.sequence.count('G')
+        c = self.sequence.count('C')
+        return (g + c) / len(self.sequence) * 100 if len(self.sequence) > 0 else 0
+    
+    def count_nucleotides(self):
+        """Return dict of nucleotide counts"""
+        return {
+            'A': self.sequence.count('A'),
+            'T': self.sequence.count('T'),
+            'C': self.sequence.count('C'),
+            'G': self.sequence.count('G')
+        }
+    
+    def find_motif(self, motif):
+        """Find all positions of motif"""
+        positions = []
+        motif = motif.upper()
+        for i in range(len(self.sequence) - len(motif) + 1):
+            if self.sequence[i:i+len(motif)] == motif:
+                positions.append(i)
+        return positions
 
 # Test
-student = Student("Alice", 20)
-student.add_grade(85)
-student.add_grade(92)
-student.add_grade(78)
-print(student)  # Alice (Age: 20, Average: 85.00)
-print(student.is_passing())  # True
+dna = DNA("ATCGATCGATCG", "test_seq")
+
+print(f"Length: {len(dna)}")
+print(f"First 4 bases: {dna[:4]}")
+print(f"GC content: {dna.gc_content():.2f}%")
+print(f"Nucleotide counts: {dna.count_nucleotides()}")
+
+rna = dna.transcribe()
+print(f"RNA: {rna.sequence}")
+
+rc = dna.reverse_complement()
+print(f"Reverse complement: {rc.sequence}")
+
+atg_positions = dna.find_motif("ATG")
+print(f"ATG found at: {atg_positions}")
 ```
-</details>
 
-### Exercise 2: Bank Account with Inheritance
-
-Create:
-- `BankAccount` base class with `deposit()` and `withdraw()`
-- `SavingsAccount` with interest calculation
-- `CheckingAccount` with overdraft protection
-
-<details>
-<summary>Solution</summary>
+### RNA Sequence Class
 
 ```python
-class BankAccount:
-    def __init__(self, owner, balance=0):
-        self.owner = owner
-        self._balance = balance
+class RNA:
+    """RNA sequence class with translation"""
     
-    def deposit(self, amount):
-        if amount > 0:
-            self._balance += amount
-            return True
-        return False
+    CODON_TABLE = {
+        'UUU': 'F', 'UUC': 'F', 'UUA': 'L', 'UUG': 'L',
+        'UCU': 'S', 'UCC': 'S', 'UCA': 'S', 'UCG': 'S',
+        'UAU': 'Y', 'UAC': 'Y', 'UAA': '*', 'UAG': '*',
+        'UGU': 'C', 'UGC': 'C', 'UGA': '*', 'UGG': 'W',
+        'CUU': 'L', 'CUC': 'L', 'CUA': 'L', 'CUG': 'L',
+        'CCU': 'P', 'CCC': 'P', 'CCA': 'P', 'CCG': 'P',
+        'CAU': 'H', 'CAC': 'H', 'CAA': 'Q', 'CAG': 'Q',
+        'CGU': 'R', 'CGC': 'R', 'CGA': 'R', 'CGG': 'R',
+        'AUU': 'I', 'AUC': 'I', 'AUA': 'I', 'AUG': 'M',
+        'ACU': 'T', 'ACC': 'T', 'ACA': 'T', 'ACG': 'T',
+        'AAU': 'N', 'AAC': 'N', 'AAA': 'K', 'AAG': 'K',
+        'AGU': 'S', 'AGC': 'S', 'AGA': 'R', 'AGG': 'R',
+        'GUU': 'V', 'GUC': 'V', 'GUA': 'V', 'GUG': 'V',
+        'GCU': 'A', 'GCC': 'A', 'GCA': 'A', 'GCG': 'A',
+        'GAU': 'D', 'GAC': 'D', 'GAA': 'E', 'GAG': 'E',
+        'GGU': 'G', 'GGC': 'G', 'GGA': 'G', 'GGG': 'G'
+    }
     
-    def withdraw(self, amount):
-        if 0 < amount <= self._balance:
-            self._balance -= amount
-            return True
-        return False
+    def __init__(self, sequence, seq_id=""):
+        self.sequence = sequence.upper()
+        self.seq_id = seq_id
+    
+    def __len__(self):
+        return len(self.sequence)
+    
+    def translate(self):
+        """Translate RNA to protein"""
+        protein = []
+        
+        for i in range(0, len(self.sequence) - 2, 3):
+            codon = self.sequence[i:i+3]
+            amino_acid = self.CODON_TABLE.get(codon, 'X')
+            
+            if amino_acid == '*':  # Stop codon
+                break
+            
+            protein.append(amino_acid)
+        
+        return Protein(''.join(protein), self.seq_id)
+    
+    def find_start_codons(self):
+        """Find all AUG positions"""
+        positions = []
+        for i in range(len(self.sequence) - 2):
+            if self.sequence[i:i+3] == 'AUG':
+                positions.append(i)
+        return positions
+
+# Test
+rna = RNA("AUGUGCUAAUCGAAA", "mrna1")
+print(f"RNA: {rna.sequence}")
+
+start_codons = rna.find_start_codons()
+print(f"Start codons at: {start_codons}")
+
+protein = rna.translate()
+print(f"Protein: {protein.sequence}")
+```
+
+### Protein Sequence Class
+
+```python
+class Protein:
+    """Protein sequence class"""
+    
+    # Amino acid properties
+    HYDROPHOBIC = set('AILMFWV')
+    POLAR = set('STNQ')
+    CHARGED = set('DEKR')
+    AROMATIC = set('FWY')
+    
+    # Molecular weights (Da)
+    MW_TABLE = {
+        'A': 89.1, 'R': 174.2, 'N': 132.1, 'D': 133.1,
+        'C': 121.2, 'Q': 146.2, 'E': 147.1, 'G': 75.1,
+        'H': 155.2, 'I': 131.2, 'L': 131.2, 'K': 146.2,
+        'M': 149.2, 'F': 165.2, 'P': 115.1, 'S': 105.1,
+        'T': 119.1, 'W': 204.2, 'Y': 181.2, 'V': 117.1
+    }
+    
+    def __init__(self, sequence, seq_id=""):
+        self.sequence = sequence.upper()
+        self.seq_id = seq_id
+    
+    def __len__(self):
+        return len(self.sequence)
+    
+    def molecular_weight(self):
+        """Calculate molecular weight in Daltons"""
+        weight = sum(self.MW_TABLE.get(aa, 0) for aa in self.sequence)
+        # Subtract water molecules from peptide bonds
+        weight -= (len(self.sequence) - 1) * 18.015
+        return weight
+    
+    def count_amino_acids(self):
+        """Return frequency of each amino acid"""
+        counts = {}
+        for aa in self.sequence:
+            counts[aa] = counts.get(aa, 0) + 1
+        return counts
+    
+    def get_composition(self):
+        """Get composition by property"""
+        return {
+            'hydrophobic': sum(1 for aa in self.sequence if aa in self.HYDROPHOBIC),
+            'polar': sum(1 for aa in self.sequence if aa in self.POLAR),
+            'charged': sum(1 for aa in self.sequence if aa in self.CHARGED),
+            'aromatic': sum(1 for aa in self.sequence if aa in self.AROMATIC)
+        }
+    
+    def calculate_pi(self):
+        """Estimate isoelectric point (simplified)"""
+        # Count charged residues
+        positive = sum(1 for aa in self.sequence if aa in 'KR')
+        negative = sum(1 for aa in self.sequence if aa in 'DE')
+        
+        # Very simplified estimation
+        if positive > negative:
+            return 7.0 + (positive - negative) * 0.5
+        elif negative > positive:
+            return 7.0 - (negative - positive) * 0.5
+        else:
+            return 7.0
+
+# Test
+protein = Protein("MKTAYIAKQRQISFVKSHFSRQLEERLGLIEV", "p53_fragment")
+
+print(f"Protein: {protein.sequence}")
+print(f"Length: {len(protein)} amino acids")
+print(f"Molecular weight: {protein.molecular_weight():.2f} Da")
+print(f"Composition: {protein.get_composition()}")
+print(f"Estimated pI: {protein.calculate_pi():.2f}")
+print(f"Amino acid counts: {protein.count_amino_acids()}")
+```
+
+---
+
+## 🧩 Part 3: Inheritance
+
+### Base Sequence Class
+
+```python
+class BioSequence:
+    """Base class for all biological sequences"""
+    
+    def __init__(self, sequence, seq_id="", description=""):
+        self.sequence = sequence.upper()
+        self.seq_id = seq_id
+        self.description = description
+    
+    def __len__(self):
+        return len(self.sequence)
+    
+    def __str__(self):
+        preview = self.sequence[:50] + "..." if len(self.sequence) > 50 else self.sequence
+        return f"{self.__class__.__name__}({self.seq_id}, {len(self)} bp): {preview}"
+    
+    def to_fasta(self, line_length=60):
+        """Export as FASTA format"""
+        header = f">{self.seq_id}"
+        if self.description:
+            header += f" {self.description}"
+        
+        lines = [header]
+        for i in range(0, len(self.sequence), line_length):
+            lines.append(self.sequence[i:i+line_length])
+        
+        return '\n'.join(lines)
+
+class DNASeq(BioSequence):
+    """DNA sequence - inherits from BioSequence"""
+    
+    def __init__(self, sequence, seq_id="", description=""):
+        # Call parent constructor
+        super().__init__(sequence, seq_id, description)
+        
+        # Validate DNA
+        valid_bases = set('ATCGN')
+        if not set(self.sequence).issubset(valid_bases):
+            raise ValueError(f"Invalid DNA sequence: contains non-DNA characters")
+    
+    def transcribe(self):
+        """Convert to RNA"""
+        rna_seq = self.sequence.replace('T', 'U')
+        return RNASeq(rna_seq, self.seq_id, self.description)
+    
+    def gc_content(self):
+        """Calculate GC%"""
+        g = self.sequence.count('G')
+        c = self.sequence.count('C')
+        return (g + c) / len(self.sequence) * 100 if len(self.sequence) > 0 else 0
+
+class RNASeq(BioSequence):
+    """RNA sequence - inherits from BioSequence"""
+    
+    def __init__(self, sequence, seq_id="", description=""):
+        super().__init__(sequence, seq_id, description)
+        
+        # Validate RNA
+        valid_bases = set('AUCGN')
+        if not set(self.sequence).issubset(valid_bases):
+            raise ValueError(f"Invalid RNA sequence: contains non-RNA characters")
+    
+    def back_transcribe(self):
+        """Convert to DNA"""
+        dna_seq = self.sequence.replace('U', 'T')
+        return DNASeq(dna_seq, self.seq_id, self.description)
+
+# Test inheritance
+dna = DNASeq("ATCGATCG", "gene1", "Test gene")
+print(dna)
+print(f"GC content: {dna.gc_content():.2f}%")
+
+rna = dna.transcribe()
+print(rna)
+
+print("\nFASTA format:")
+print(dna.to_fasta(line_length=40))
+```
+
+### Specialized Gene Class
+
+```python
+class Gene(DNASeq):
+    """Gene class with additional features"""
+    
+    def __init__(self, sequence, seq_id="", description="", 
+                 start_pos=0, end_pos=None, strand="+"):
+        super().__init__(sequence, seq_id, description)
+        
+        self.start_pos = start_pos
+        self.end_pos = end_pos if end_pos else len(sequence)
+        self.strand = strand
+        self.exons = []  # List of (start, end) tuples
+    
+    def add_exon(self, start, end):
+        """Add an exon coordinate"""
+        self.exons.append((start, end))
+        self.exons.sort()  # Keep sorted
+    
+    def get_exon_sequence(self):
+        """Extract and concatenate exon sequences"""
+        exon_seqs = []
+        for start, end in self.exons:
+            exon_seqs.append(self.sequence[start:end])
+        return ''.join(exon_seqs)
+    
+    def get_intron_count(self):
+        """Return number of introns"""
+        return max(0, len(self.exons) - 1)
+    
+    def is_coding(self):
+        """Check if gene has exons (coding)"""
+        return len(self.exons) > 0
+
+# Test
+gene = Gene("ATGAAATTTCCCGGGTAGAAATTTCCCTAA", "BRCA1", "Breast cancer gene")
+gene.add_exon(0, 9)    # First exon: ATGAAATTT
+gene.add_exon(12, 21)  # Second exon: CCCGGGTAG
+gene.add_exon(24, 30)  # Third exon: AATTTC
+
+print(gene)
+print(f"Exon count: {len(gene.exons)}")
+print(f"Intron count: {gene.get_intron_count()}")
+print(f"Exon sequence: {gene.get_exon_sequence()}")
+print(f"Is coding: {gene.is_coding()}")
+```
+
+---
+
+## 🧩 Part 4: Encapsulation & Properties
+
+### Private Attributes
+
+```python
+class SecureSequence:
+    """Sequence with data validation"""
+    
+    def __init__(self, sequence):
+        # Private attribute (by convention, use _)
+        self._sequence = ""
+        self._quality_score = None
+        
+        # Use setter to validate
+        self.set_sequence(sequence)
+    
+    def get_sequence(self):
+        """Getter method"""
+        return self._sequence
+    
+    def set_sequence(self, sequence):
+        """Setter method with validation"""
+        sequence = sequence.upper()
+        
+        # Validate
+        valid_bases = set('ATCGN')
+        if not set(sequence).issubset(valid_bases):
+            raise ValueError("Invalid sequence characters")
+        
+        if len(sequence) < 3:
+            raise ValueError("Sequence too short")
+        
+        self._sequence = sequence
+    
+    def calculate_quality(self):
+        """Calculate internal quality score"""
+        n_count = self._sequence.count('N')
+        self._quality_score = 100 - (n_count / len(self._sequence) * 100)
+        return self._quality_score
+
+# Test
+seq = SecureSequence("ATCGATCG")
+print(f"Sequence: {seq.get_sequence()}")
+print(f"Quality: {seq.calculate_quality():.2f}")
+
+# This will raise error
+try:
+    seq.set_sequence("ATCGXYZ")
+except ValueError as e:
+    print(f"Error: {e}")
+```
+
+### Property Decorators
+
+```python
+class ModernSequence:
+    """Sequence using @property decorators"""
+    
+    def __init__(self, sequence):
+        self._sequence = sequence.upper()
+        self._gc_cache = None  # Cache for expensive calculation
     
     @property
-    def balance(self):
-        return self._balance
+    def sequence(self):
+        """Getter as property"""
+        return self._sequence
+    
+    @sequence.setter
+    def sequence(self, value):
+        """Setter with validation"""
+        value = value.upper()
+        if not set(value).issubset(set('ATCGN')):
+            raise ValueError("Invalid characters")
+        
+        self._sequence = value
+        self._gc_cache = None  # Invalidate cache
+    
+    @property
+    def length(self):
+        """Read-only property"""
+        return len(self._sequence)
+    
+    @property
+    def gc_content(self):
+        """Cached property"""
+        if self._gc_cache is None:
+            g = self._sequence.count('G')
+            c = self._sequence.count('C')
+            self._gc_cache = (g + c) / len(self._sequence) * 100
+        
+        return self._gc_cache
+
+# Test - use like attributes!
+seq = ModernSequence("ATCGATCG")
+print(f"Sequence: {seq.sequence}")
+print(f"Length: {seq.length}")
+print(f"GC%: {seq.gc_content:.2f}")
+
+# Modify sequence
+seq.sequence = "GCGCGCGC"
+print(f"New GC%: {seq.gc_content:.2f}")
+```
+
+---
+
+## 🧩 Part 5: Complete Example
+
+### FASTA Record Class
+
+```python
+class FastaRecord:
+    """Complete FASTA record with full functionality"""
+    
+    def __init__(self, header, sequence):
+        self._parse_header(header)
+        self.sequence = sequence.upper().replace(' ', '').replace('\n', '')
+    
+    def _parse_header(self, header):
+        """Parse FASTA header into components"""
+        # Remove leading >
+        header = header.lstrip('>')
+        
+        # Split ID and description
+        parts = header.split(maxsplit=1)
+        self.seq_id = parts[0]
+        self.description = parts[1] if len(parts) > 1 else ""
+    
+    def __len__(self):
+        return len(self.sequence)
     
     def __str__(self):
-        return f"{self.owner}'s account: ${self._balance:.2f}"
-
-class SavingsAccount(BankAccount):
-    def __init__(self, owner, balance=0, interest_rate=0.01):
-        super().__init__(owner, balance)
-        self.interest_rate = interest_rate
+        return f"FastaRecord({self.seq_id}, {len(self)} bp)"
     
-    def add_interest(self):
-        interest = self._balance * self.interest_rate
-        self.deposit(interest)
-        return interest
-
-class CheckingAccount(BankAccount):
-    def __init__(self, owner, balance=0, overdraft_limit=100):
-        super().__init__(owner, balance)
-        self.overdraft_limit = overdraft_limit
+    def __repr__(self):
+        return f"FastaRecord(seq_id='{self.seq_id}', length={len(self)})"
     
-    def withdraw(self, amount):
-        if 0 < amount <= self._balance + self.overdraft_limit:
-            self._balance -= amount
-            return True
-        return False
+    def __eq__(self, other):
+        """Enable comparison"""
+        if not isinstance(other, FastaRecord):
+            return False
+        return self.sequence == other.sequence
+    
+    @property
+    def header(self):
+        """Reconstruct header"""
+        if self.description:
+            return f">{self.seq_id} {self.description}"
+        return f">{self.seq_id}"
+    
+    def to_fasta(self, line_length=60):
+        """Export as FASTA format"""
+        lines = [self.header]
+        
+        for i in range(0, len(self.sequence), line_length):
+            lines.append(self.sequence[i:i+line_length])
+        
+        return '\n'.join(lines)
+    
+    def gc_content(self):
+        """Calculate GC percentage"""
+        g = self.sequence.count('G')
+        c = self.sequence.count('C')
+        return (g + c) / len(self.sequence) * 100 if len(self.sequence) > 0 else 0
+    
+    def count_bases(self):
+        """Return base composition"""
+        return {
+            'A': self.sequence.count('A'),
+            'T': self.sequence.count('T'),
+            'C': self.sequence.count('C'),
+            'G': self.sequence.count('G'),
+            'N': self.sequence.count('N')
+        }
+    
+    def reverse_complement(self):
+        """Return new record with reverse complement"""
+        complement = str.maketrans('ATCGN', 'TAGCN')
+        rc_seq = self.sequence.translate(complement)[::-1]
+        return FastaRecord(
+            f"{self.seq_id}_rc",
+            rc_seq
+        )
+    
+    @classmethod
+    def from_file(cls, filename):
+        """Create records from FASTA file"""
+        records = []
+        current_header = None
+        current_seq = []
+        
+        with open(filename, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith('>'):
+                    # Save previous record
+                    if current_header:
+                        records.append(cls(current_header, ''.join(current_seq)))
+                    
+                    current_header = line
+                    current_seq = []
+                else:
+                    current_seq.append(line)
+            
+            # Save last record
+            if current_header:
+                records.append(cls(current_header, ''.join(current_seq)))
+        
+        return records
 
 # Test
-savings = SavingsAccount("Alice", 1000, 0.05)
-print(savings)  # Alice's account: $1000.00
-savings.add_interest()
-print(savings)  # Alice's account: $1050.00
+record = FastaRecord(">NM_007294 BRCA1 gene", "ATCGATCGATCG")
 
-checking = CheckingAccount("Bob", 100, 50)
-checking.withdraw(120)  # Uses overdraft
-print(checking)  # Bob's account: $-20.00
+print(record)
+print(f"Header: {record.header}")
+print(f"Length: {len(record)}")
+print(f"GC%: {record.gc_content():.2f}")
+print(f"Base counts: {record.count_bases()}")
+
+print("\nFASTA format:")
+print(record.to_fasta(line_length=40))
+
+print("\nReverse complement:")
+rc = record.reverse_complement()
+print(rc.sequence)
 ```
-</details>
-
-### Exercise 3: RNA Sequence Class
-
-Create an `RNASequence` class similar to `DNASequence` with:
-- Valid nucleotides: A, U, C, G (not T!)
-- Method to translate to protein (simplified)
-- Method to find start codon (AUG)
 
 ---
 
-## 🎓 Summary
+## 📝 Practice Tasks (Day 18)
 
-### Key Takeaways
+### Basic Exercises
 
-1. **Classes** are blueprints; **objects** are instances
-2. **`__init__`** initializes objects
-3. **`self`** refers to the current instance
-4. **Encapsulation**: Bundle data and methods, control access
-5. **Inheritance**: Reuse code from parent classes
-6. **Polymorphism**: Same interface, different implementations
-7. **Special methods**: Customize object behavior
-8. **Properties**: Make methods look like attributes
-9. **Class methods**: Work with class data
-10. **Static methods**: Utility functions
+1. **Simple Class**: Create a `Nucleotide` class with attributes for base, position, and quality score.
 
-### When to Use OOP?
+2. **Sequence Counter**: Create a `SequenceCollection` class that stores multiple sequences and counts total bases.
 
-✅ Modeling real-world entities (Dog, Student, BankAccount)  
-✅ Creating reusable components (DNASequence)  
-✅ Managing complex state (GameCharacter)  
-✅ Building frameworks and libraries  
+3. **Codon Class**: Create a `Codon` class with methods to translate to amino acid.
 
-❌ Simple scripts with procedural logic  
-❌ One-time data processing  
-❌ Pure mathematical computations  
+4. **Read Class**: Create a `SequencingRead` class for FASTQ entries (sequence + quality).
+
+5. **Alignment Class**: Create a `PairwiseAlignment` class storing two sequences and a score.
+
+### Intermediate Challenges
+
+6. **Gene Hierarchy**: Implement inheritance chain: `Sequence` → `Gene` → `Transcript` → `Protein`.
+
+7. **Motif Class**: Create a `Motif` class that finds itself in sequences with position tracking.
+
+8. **Quality Control**: Implement a `QualityChecker` class that validates sequences with multiple criteria.
+
+9. **Sequence Parser**: Create a `FastqParser` class that reads files and returns `FastqRecord` objects.
+
+10. **Statistics Mixin**: Create a `StatsMixin` class with GC%, length, composition that other classes can inherit.
+
+### Advanced Challenges
+
+11. **Complete BioPython-like API**: Design a mini-library with `SeqRecord`, `Seq`, and `SeqIO` classes.
+
+12. **Polymorphism**: Implement a `translate()` method that works differently for DNA vs RNA classes.
+
+13. **Operator Overloading**: Implement `+` to concatenate sequences, `*` to repeat, `in` to find motifs.
+
+14. **Context Manager**: Create a `FastaFile` class that works with `with` statement for safe file handling.
+
+15. **Iterator Protocol**: Implement `__iter__` and `__next__` for a `GenomeScanner` class that yields windows.
 
 ---
 
-## 📚 Further Reading
+## 💡 Key Takeaways
 
-- [Python Official Tutorial - Classes](https://docs.python.org/3/tutorial/classes.html)
-- [Real Python - OOP in Python 3](https://realpython.com/python3-object-oriented-programming/)
-- [Python Data Model](https://docs.python.org/3/reference/datamodel.html)
+✓ **Classes** bundle data (attributes) and behavior (methods) together  
+✓ **__init__** constructor initializes new instances  
+✓ **self** refers to the instance itself  
+✓ **Inheritance** enables code reuse via parent classes  
+✓ **super()** calls parent class methods  
+✓ **Properties (@property)** provide controlled attribute access  
+✓ **Private attributes (_name)** indicate internal implementation  
+✓ **Magic methods (__str__, __len__)** customize behavior  
+✓ **Class methods (@classmethod)** operate on class level  
+✓ **Static methods (@staticmethod)** don't need instance or class  
+✓ **Encapsulation** hides implementation details  
+✓ **Polymorphism** allows method overriding in subclasses  
+✓ **Composition over inheritance** - prefer has-a over is-a  
+✓ **Document classes** with docstrings for usability  
+✓ **Design APIs** thinking about user experience  
 
----
-
-**Happy Coding! 🐍✨**
+**Next**: Python Packages, Modules, and BioPython
