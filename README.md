@@ -6,7 +6,7 @@ A comprehensive learning resource for Python programming with a focus on bioinfo
 
 ### Accessing in Google Colab
 
-To open any notebook from this repository in Google Colab, replace `github.com` in the URL with:
+To open any notebook from this repository in Google Colab, replace `http://github.com` in the URL with:
 
 ```
 https://colab.research.google.com/github/
